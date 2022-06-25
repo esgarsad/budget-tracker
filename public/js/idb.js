@@ -10,9 +10,11 @@ request.onupgradeneeded = function(event) {
 
 
 request.onsuccess = function(event) {
-
-    db = event.target.result;
+  // when db is successfully created with its object store (from onupgradedneeded event above), save reference to db in global variable
+  db = event.target.result;
+    // check if app is online, if yes run checkDatabase() function to send all local db data to api
     if (navigator.onLine) {
+        uploadTransaction();
     }
 };
 
@@ -29,7 +31,7 @@ function saveRecord(record) {
 }
 
 function uploadTransaction() {
-
+  // open a transaction on your pending db
     const transaction = db.transaction(['new_transaction'], 'readwrite');
     const budgetObjectStore = transaction.objectStore('new_transaction');
     const getAll = budgetObjectStore.getAll();
@@ -60,7 +62,7 @@ function uploadTransaction() {
                     // clear all items in store
                     budgetObjectStore.clear();
 
-                    alert('Saved transactions have been submitted');
+                    console.log('Saved transactions have been submitted');
                 })
                 .catch(err => {
                     console.log(err);
